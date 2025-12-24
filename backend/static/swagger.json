@@ -1,0 +1,22 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "PayTrust API",
+    "version": "1.0"
+  },
+  "paths": {
+    "/api/auth/login": {
+      "post": {
+        "summary": "Login"
+      }
+    },
+    "/api/employees/": {
+      "get": {
+        "summary": "List employees"
+      },
+      "post": {
+        "summary": "Create employee"
+      }
+    }
+  }
+}

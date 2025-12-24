@@ -1,4 +1,7 @@
 flask
+flask-jwt-extended
 sqlalchemy
 psycopg2-binary
 python-dotenv
+reportlab
+flask-swagger-ui

@@ -1,0 +1,7 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "PayTrust API",
+    "version": "1.0"
+  }
+}

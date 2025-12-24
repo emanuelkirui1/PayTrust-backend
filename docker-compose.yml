@@ -1,0 +1,10 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: paytrust_backend
+    ports:
+      - "5000:5000"
+    env_file:
+      - ./backend/.env
