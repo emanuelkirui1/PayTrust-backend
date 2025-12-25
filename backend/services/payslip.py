@@ -1,22 +1,24 @@
-from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
-import os
+from reportlab.pdfgen import canvas
+import smtplib, ssl
 
-def generate_payslip(employee, payroll):
-    path = f"/tmp/payslip_{employee.id}.pdf"
-    c = canvas.Canvas(path, pagesize=A4)
-
-    c.drawString(50, 800, "PayTrust Payslip")
-    c.drawString(50, 770, f"Name: {employee.name}")
-    c.drawString(50, 750, f"Email: {employee.email}")
-    c.drawString(50, 720, f"Gross: {payroll['gross']}")
-    c.drawString(50, 700, f"PAYE: {payroll['paye']}")
-    c.drawString(50, 680, f"Net Pay: {payroll['net']}")
-c.drawString(50, 660, f"NSSF: {payroll.get(nssf, 0)}")
-c.drawString(50, 640, f"NHIF: {payroll.get(nhif, 0)}")
-c.drawString(50, 660, f"NSSF: {payroll.get(nssf, 0)}")
-c.drawString(50, 640, f"NHIF: {payroll.get(nhif, 0)}")
-c.drawString(50, 640, f"NHIF: {payroll.get(nhif, 0)}")
-
+def generate_payslip(name, gross, net, filename="payslip.pdf"):
+    c = canvas.Canvas(filename, pagesize=A4)
+    c.drawString(100, 800, f"PAYTRUST PAYSLIP")
+    c.drawString(100, 780, f"Employee: {name}")
+    c.drawString(100, 760, f"Gross Salary: {gross}")
+    c.drawString(100, 740, f"Net Salary: {net}")
     c.save()
-    return path
+    return filename
+
+
+def email_payslip(to_email, pdf_path):
+    smtp_server = "smtp.gmail.com"
+    port = 465
+    sender = "yourcompany@example.com"
+    password = "APP_PASSWORD_HERE"
+
+    context = ssl.create_default_context()
+    with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
+        server.login(sender, password)
+        server.sendmail(sender, to_email, f"Payslip attached", pdf_path)
