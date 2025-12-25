@@ -1,4 +1,7 @@
 from flask import Flask, jsonify, request
+from swagger import init_swagger
+from routes.payroll import payroll_bp
+from routes.employees import employees_bp
 from flask_jwt_extended import JWTManager, get_jwt_identity
 from config import Config
 from database import Base, engine
@@ -10,6 +13,8 @@ from routes.docs import docs_bp
 from services.audit import log_action
 
 app = Flask(__name__)
+app.register_blueprint(payroll_bp, url_prefix='/payroll')
+app.register_blueprint(employees_bp, url_prefix='/employees')
 app.config.from_object(Config)
 
 jwt = JWTManager(app)
@@ -42,6 +47,8 @@ from routes.docs import docs_bp
 app.register_blueprint(docs_bp)
 
 from flask import request
+from routes.payroll import payroll_bp
+from routes.employees import employees_bp
 from flask_jwt_extended import get_jwt_identity
 from services.audit import log_action
 

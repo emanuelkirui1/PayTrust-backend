@@ -1,29 +1,20 @@
-import smtplib
-from email.message import EmailMessage
-import os
+from flask_mail import Mail, Message
 
-SMTP_HOST = os.getenv("SMTP_HOST")
-SMTP_PORT = int(os.getenv("SMTP_PORT", 587))
-SMTP_USER = os.getenv("SMTP_USER")
-SMTP_PASS = os.getenv("SMTP_PASS")
+mail = Mail()
 
-def send_email(to, subject, body, attachment=None):
-    msg = EmailMessage()
-    msg["From"] = SMTP_USER
-    msg["To"] = to
-    msg["Subject"] = subject
-    msg.set_content(body)
+def init_mail(app):
+    app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+    app.config['MAIL_PORT'] = 587
+    app.config['MAIL_USE_TLS'] = True
+    app.config['MAIL_USERNAME'] = "yourcompany@gmail.com"
+    app.config['MAIL_PASSWORD'] = "your-app-password"
+    mail.init_app(app)
 
-    if attachment:
-        with open(attachment, "rb") as f:
-            msg.add_attachment(
-                f.read(),
-                maintype="application",
-                subtype="pdf",
-                filename="payslip.pdf"
-            )
-
-    with smtplib.SMTP(SMTP_HOST, SMTP_PORT) as server:
-        server.starttls()
-        server.login(SMTP_USER, SMTP_PASS)
-        server.send_message(msg)
+def send_payslip(email, pdf_path):
+    from flask import current_app
+    with current_app.app_context():
+        msg = Message("Payslip", sender=current_app.config['MAIL_USERNAME'], recipients=[email])
+        msg.body = "Attached is your monthly payslip."
+        with open(pdf_path, "rb") as f:
+            msg.attach("payslip.pdf", "application/pdf", f.read())
+        mail.send(msg)
