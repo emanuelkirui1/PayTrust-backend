@@ -19,3 +19,9 @@ boto3
 boto3
 pyotp
 flasgger
+flasgger
+boto3
+pyotp
+flasgger
+boto3
+pyotp
