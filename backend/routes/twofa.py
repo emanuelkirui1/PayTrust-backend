@@ -1,19 +1,23 @@
 from flask import Blueprint, request, jsonify
 import pyotp
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 twofa_bp = Blueprint("twofa_bp", __name__)
-secret_key = pyotp.random_base32()
 
-@twofa_bp.route("/generate-otp", methods=["GET"])
+@twofa_bp.route("/2fa/setup", methods=["GET"])
 @jwt_required()
-def generate_otp():
-    otp = pyotp.TOTP(secret_key).now()
-    return jsonify({"otp": otp})
+def setup():
+    user = get_jwt_identity()
+    secret = pyotp.random_base32()
+    otp_uri = pyotp.totp.TOTP(secret).provisioning_uri(user["email"], issuer_name="PayTrust Payroll")
+    return jsonify({"secret": secret, "otp_uri": otp_uri})
 
-@twofa_bp.route("/verify-otp", methods=["POST"])
-def verify_otp():
-    otp = request.json.get("otp")
-    if pyotp.TOTP(secret_key).verify(otp):
-        return jsonify({"success": True, "message": "OTP verified"})
-    return jsonify({"success": False, "message": "Invalid OTP"}), 400
+@twofa_bp.route("/2fa/verify", methods=["POST"])
+@jwt_required()
+def verify():
+    data = request.json
+    secret = data.get("secret")
+    token = data.get("token")
+    if pyotp.TOTP(secret).verify(token):
+        return jsonify({"verified": True, "message": "2FA passed"})
+    return jsonify({"verified": False, "message": "Invalid code"}), 400

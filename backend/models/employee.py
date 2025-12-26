@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, String, Float
 from models import Base
 
 class Employee(Base):
+    company_id = Column(Integer)
     __tablename__ = "employees"
 
     id = Column(Integer, primary_key=True)

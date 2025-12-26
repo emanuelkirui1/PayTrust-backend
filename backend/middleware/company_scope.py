@@ -9,8 +9,11 @@ def company_required(fn):
         user = get_jwt_identity()
         company_id = request.headers.get("X-Company-ID")
 
-        if not company_id or str(user.get("company_id")) != str(company_id):
-            return jsonify({"error": "Company access denied"}), 403
+        if not company_id:
+            return jsonify({"error":"Missing company header"}), 400
+            
+        if str(user.get("company_id")) != str(company_id):
+            return jsonify({"error":"Access denied: wrong company"}), 403
 
         return fn(*args, company_id=company_id, **kwargs)
     return wrapper

@@ -1,26 +1,12 @@
 from flask import Blueprint, request, jsonify
+from flask_jwt_extended import jwt_required, get_jwt_identity
+from middleware.company_scope import company_required
 
 employees_bp = Blueprint("employees_bp", __name__)
 
-employees = []
-
-@employees_bp.route("/", methods=["POST"])
-def add_employee():
-    data = request.json
-    data["id"] = len(employees) + 1
-    employees.append(data)
-    return jsonify({"message": "Employee added", "employee": data})
-
 @employees_bp.route("/", methods=["GET"])
-def get_employees():
-    return jsonify(employees)
+@jwt_required()
+@company_required
+def get_employees(company_id):
+    return jsonify({"message": f"Employees for company {company_id}"}), 200
 
-@employees_bp.route("/<int:id>", methods=["PUT"])
-def update_employee(id):
-    employees[id-1].update(request.json)
-    return jsonify({"message": "Employee updated", "employee": employees[id-1]})
-
-@employees_bp.route("/<int:id>", methods=["DELETE"])
-def delete_employee(id):
-    employees[:] = [e for e in employees if e["id"] != id]
-    return jsonify({"message": "Employee removed"})

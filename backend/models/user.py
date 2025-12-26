@@ -3,6 +3,7 @@ from sqlalchemy import Column, Integer, String
 from werkzeug.security import generate_password_hash, check_password_hash
 
 class User(Base):
+    company_id = Column(Integer)
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True)
