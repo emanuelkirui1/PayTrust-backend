@@ -5,3 +5,7 @@ psycopg2-binary
 python-dotenv
 reportlab
 flask-swagger-ui
+boto3
+boto3
+boto3
+boto3
